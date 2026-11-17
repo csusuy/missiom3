@@ -223,3 +223,37 @@ def run_mode_2():
     else:
         print("\n모든 테스트를 성공적으로 통과했습니다! (0 FAIL)")
         
+import time
+from src.npu_core import mac_operation, mac_operation_1d
+
+def run_performance_benchmark():
+    """
+    보너스 과제: 2차원 연산과 1차원 최적화 연산의 성능(속도) 비교 분석
+    """
+    N = 25  # 기본 테스트 사이즈
+    # 임의의 테스트용 패턴 및 필터 데이터 생성
+    pattern = [[1 if (r + c) % 2 == 0 else 0 for c in range(N)] for r in range(N)]
+    filter_data = [[1 if (r + c) % 3 == 0 else 0 for c in range(N)] for r in range(N)]
+
+    print(f"\n[성능 비교 분석 시작 (N={N}, 1000회 반복)]")
+
+    # 1. 기존 2차원 방식 시간 측정
+    start_time = time.time()
+    for _ in range(1000):
+        mac_operation(pattern, filter_data)
+    end_time = time.time()
+    time_2d = end_time - start_time
+    print(f"- 2차원 연산 소요 시간: {time_2d:.5f}초")
+
+    # 2. 최적화된 1차원 방식 시간 측정
+    start_time = time.time()
+    for _ in range(1000):
+        mac_operation_1d(pattern, filter_data, N)
+    end_time = time.time()
+    time_1d = end_time - start_time
+    print(f"- 1차원 최적화 소요 시간: {time_1d:.5f}초")
+
+    # 속도 개선율 출력
+    if time_2d > 0:
+        improvement = ((time_2d - time_1d) / time_2d) * 100
+        print(f"- 성능 향상 결과: 약 {improvement:.2f}% 시간 단축\n")        
