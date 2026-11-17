@@ -50,4 +50,19 @@ def determine_winner(score_a, score_b, label_a="Cross", label_b="X", epsilon=1e-
         return label_a
     else:
         return label_b
+
+# 기존 2차원 MAC 연산 함수 아래에 추가
+def mac_operation_1d(pattern, filter_data, N):
+    """
+    2차원 배열을 1차원으로 평탄화(Flatten)하여 MAC 연산을 수행하는 최적화 함수
+    """
+    # 2차원 리스트를 1차원 리스트로 변환 (Flatten)
+    flat_pattern = [val for row in pattern for val in row]
+    flat_filter = [val for row in filter_data for val in row]
+    
+    # 1차원 순회를 통한 MAC 연산 (오버헤드 감소)
+    accumulated_sum = 0
+    for i in range(N * N):
+        accumulated_sum += flat_pattern[i] * flat_filter[i]
         
+    return accumulated_sum
